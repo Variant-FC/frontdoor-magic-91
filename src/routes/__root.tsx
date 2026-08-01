@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { MalumeProvider } from "../lib/malume/store";
+import logoAsset from "../assets/malume-logo.jpg.asset.json";
 
 function NotFoundComponent() {
   return (
@@ -106,7 +107,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
   shellComponent: RootShell,
@@ -144,13 +145,12 @@ function SiteHeader() {
     <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-5 py-3">
         <Link to="/" className="flex items-center gap-2">
-          <span
-            aria-hidden
-            className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-base font-bold text-primary-foreground"
-          >
-            M
-          </span>
-          <span className="text-lg font-semibold tracking-tight">Malume Money</span>
+          <img
+            src={logoAsset.url}
+            alt="Money Malume — AI financial assistant"
+            className="h-10 w-auto"
+          />
+          <span className="sr-only">Malume Money</span>
         </Link>
         <nav className="ml-auto flex flex-wrap items-center gap-1 text-sm">
           {NAV.map((item) => (
