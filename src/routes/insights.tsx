@@ -5,6 +5,8 @@ import { MalumeSays } from "@/components/malume/MalumeSays";
 import { Button } from "@/components/ui/button";
 import { malumeBatchTake } from "@/lib/malume/analysis";
 import { buildInsightsSummary, downloadText } from "@/lib/malume/export";
+import { buildBatchFacts } from "@/lib/malume/facts";
+import { useMalumeTake } from "@/lib/malume/useMalumeTake";
 import { Download } from "lucide-react";
 
 const TITLE = "Insights — Malume Money";
@@ -27,6 +29,12 @@ export const Route = createFileRoute("/insights")({
 
 function InsightsPage() {
   const { transactions, anomalies, anomalyCount, insights, profile } = useMalume();
+
+  const { text: malumeText } = useMalumeTake(
+    buildBatchFacts(transactions, anomalyCount, profile.business),
+    malumeBatchTake(transactions, anomalyCount),
+    transactions.length > 0,
+  );
   const navigate = useNavigate();
 
   const jump = (ids: string[]) => {
@@ -40,7 +48,7 @@ function InsightsPage() {
       transactions,
       anomalies,
       insights,
-      malumeTake: malumeBatchTake(transactions, anomalyCount),
+      malumeTake: malumeText,
     });
     downloadText(
       `malume-insights-${new Date().toISOString().slice(0, 10)}.txt`,
@@ -66,7 +74,7 @@ function InsightsPage() {
       {transactions.length ? (
         <>
           <div className="mt-8 space-y-4">
-            <MalumeSays tone="ink">{malumeBatchTake(transactions, anomalyCount)}</MalumeSays>
+            <MalumeSays tone="ink">{malumeText}</MalumeSays>
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="secondary" onClick={exportSummary}>
                 <Download className="h-4 w-4" aria-hidden /> Download monthly summary

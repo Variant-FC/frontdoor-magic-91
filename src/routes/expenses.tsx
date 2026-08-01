@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMalume } from "@/lib/malume/store";
 import { SAMPLE_BATCH } from "@/lib/malume/samples";
 import { malumeBatchTake } from "@/lib/malume/analysis";
+import { buildBatchFacts } from "@/lib/malume/facts";
+import { useMalumeTake } from "@/lib/malume/useMalumeTake";
 import { MalumeSays } from "@/components/malume/MalumeSays";
 import { TransactionCard } from "@/components/malume/TransactionCard";
 import { VatView } from "@/components/malume/VatView";
@@ -32,6 +34,12 @@ export const Route = createFileRoute("/expenses")({
 
 function Expenses() {
   const { transactions, anomalies, anomalyCount, processBatch, clearBatch } = useMalume();
+
+  const { text: malumeText } = useMalumeTake(
+    buildBatchFacts(transactions, anomalyCount),
+    malumeBatchTake(transactions, anomalyCount),
+    transactions.length > 0,
+  );
   const [input, setInput] = useState("");
   const [tab, setTab] = useState("extracted");
   const totals = batchVatTotals(transactions);
@@ -102,7 +110,7 @@ function Expenses() {
         </div>
 
         <div className="space-y-4">
-          <MalumeSays tone="ink">{malumeBatchTake(transactions, anomalyCount)}</MalumeSays>
+          <MalumeSays tone="ink">{malumeText}</MalumeSays>
           {transactions.length ? (
             <>
               <div className="grid grid-cols-2 gap-3">

@@ -6,6 +6,7 @@ from periods.models import Period
 
 from .models import Insight
 from .serializers import InsightSerializer
+from .malume import is_enabled, say
 from .services import generate, income_by_client, spend_by_category
 
 
@@ -38,3 +39,14 @@ class SpendByCategoryView(APIView):
 class IncomeByClientView(APIView):
     def get(self, request):
         return Response(income_by_client(request.user, _period(request)))
+
+
+class MalumeTakeView(APIView):
+    """Ask the model to narrate a set of already-computed facts."""
+
+    def post(self, request):
+        facts = str(request.data.get("facts", "")).strip()[:4000]
+        fallback = str(request.data.get("fallback", ""))
+        if not facts:
+            return Response({"detail": "facts is required"}, status=400)
+        return Response({"malume_take": say(facts, fallback), "model_used": is_enabled()})

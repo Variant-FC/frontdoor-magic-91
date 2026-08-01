@@ -5,6 +5,8 @@ import { MalumeSays } from "@/components/malume/MalumeSays";
 import { PrototypeNote } from "@/components/malume/PrototypeNote";
 import { ProfileCard } from "@/components/malume/ProfileCard";
 import { batchVatTotals, formatZAR } from "@/lib/malume/vat";
+import { buildBatchFacts } from "@/lib/malume/facts";
+import { useMalumeTake } from "@/lib/malume/useMalumeTake";
 import { ArrowRight, FileText, Receipt, ScrollText, Sparkles } from "lucide-react";
 
 const TITLE = "Malume Money — your business money, explained like a person would";
@@ -36,6 +38,13 @@ function Dashboard() {
   const business = profileReady ? profile.business : "";
   const greeting = owner ? `Howzit, ${owner}` : "Howzit";
 
+  const fallbackTake = malumeBatchTake(transactions, anomalyCount);
+  const { text: malumeText } = useMalumeTake(
+    buildBatchFacts(transactions, anomalyCount, business),
+    fallbackTake,
+    transactions.length > 0,
+  );
+
 
   return (
     <div className="w-full py-6 md:py-8">
@@ -58,7 +67,7 @@ function Dashboard() {
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
         <div className="space-y-4">
-          <MalumeSays tone="ink">{malumeBatchTake(transactions, anomalyCount)}</MalumeSays>
+          <MalumeSays tone="ink">{malumeText}</MalumeSays>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="Records" value={String(transactions.length)} />
             <Stat label="Flags" value={String(anomalyCount)} />
