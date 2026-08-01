@@ -1,0 +1,100 @@
+# Connecting the frontend to the Django backend
+
+The two services are fully independent. They only talk over HTTPS, and the
+connection is made by **two environment variables** — one on each side.
+
+```
+   Frontend (TanStack Start)            Backend (Django + DRF)
+   VITE_API_BASE_URL  ───────────────▶  https://api.example.com
+                      ◀───────────────  CORS_ALLOWED_ORIGINS
+```
+
+---
+
+## 1. Backend (deploy this first)
+
+You need the backend's public URL before the frontend can be built, because
+`VITE_*` vars are baked in at build time.
+
+Environment variables (`backend/.env` or your host's config UI):
+
+| Variable | Example | Notes |
+|---|---|---|
+| `SECRET_KEY` | `<50+ random chars>` | required in production |
+| `DEBUG` | `False` | must be False in production |
+| `ALLOWED_HOSTS` | `api.example.com` | comma-separated, no scheme |
+| `CORS_ALLOWED_ORIGINS` | `https://app.example.com` | **the frontend's origin**, comma-separated, with scheme, no trailing slash |
+| `DATABASE_URL` | `postgres://user:pass@host:5432/db` | falls back to SQLite if unset |
+| `HUGGINGFACE_API_KEY` | `hf_...` | optional, enables AI extraction enrichment |
+
+Deploy steps:
+
+```bash
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py collectstatic --noinput
+gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+```
+
+Health check: `GET https://api.example.com/api/v1/auth/me/` should return
+`401` (not a connection error) when unauthenticated. That proves it's live.
+
+---
+
+## 2. Frontend
+
+Set **one** variable at build time:
+
+```
+VITE_API_BASE_URL=https://api.example.com
+```
+
+No trailing slash, no `/api/v1` — the client appends that prefix itself.
+
+```bash
+npm ci
+npm run build
+```
+
+Where to set it, by host:
+- **Lovable** — Publish, then add it under project env/secrets and republish.
+- **Vercel / Netlify / Cloudflare Pages** — Project Settings → Environment Variables.
+- **Docker / VPS** — export it in the shell before `npm run build`.
+
+If `VITE_API_BASE_URL` is unset, `isBackendConfigured()` returns `false` and
+the app runs in local mock mode — useful for demos, but no data is persisted.
+
+---
+
+## 3. The gotchas that actually bite
+
+1. **Origins must match exactly.** `https://app.example.com` ≠
+   `https://www.app.example.com` ≠ `http://app.example.com`. If the frontend
+   is reachable at several hostnames, list them all in `CORS_ALLOWED_ORIGINS`.
+2. **HTTPS both sides.** An HTTPS frontend cannot call an HTTP backend —
+   browsers block mixed content silently-ish.
+3. **Rebuild after changing the URL.** `VITE_*` is compile-time; restarting
+   isn't enough, the frontend must be rebuilt and redeployed.
+4. **Auth is DRF Token, not cookies.** The token is stored in `localStorage`
+   under `malume.auth.token` and sent as `Authorization: Token <key>`. No
+   CSRF or `credentials: 'include'` needed — which is why the wildcard-free
+   CORS list is sufficient.
+5. **Preview URLs change.** If your friend hosts the frontend on a preview
+   domain, add that origin to `CORS_ALLOWED_ORIGINS` too.
+
+---
+
+## 4. Smoke test after both are up
+
+From the browser console on the deployed frontend:
+
+```js
+fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/register/`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username: 'demo', password: 'demo-pass-123', email: 'demo@example.com' }),
+}).then(r => r.json()).then(console.log)
+```
+
+A `token` in the response means the connection, CORS and auth are all correct.
+A CORS error in the console means step 1's `CORS_ALLOWED_ORIGINS` is wrong.
