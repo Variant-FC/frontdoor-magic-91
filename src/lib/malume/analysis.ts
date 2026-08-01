@@ -124,7 +124,7 @@ export function detectAnomalies(transactions: Transaction[]): Record<string, Ano
         push(t.transaction_id, {
           type: "recurring_subscription",
           label: "Recurring charge",
-          matched_transaction_id: group.find((g) => g !== t)?.transaction_id,
+          ...(group.find((g) => g !== t) ? { matched_transaction_id: group.find((g) => g !== t)!.transaction_id } : {}),
           reasoning: `${t.merchant} charges the same amount on a repeating schedule (${group.map((g) => g.date).join(", ")}).`,
           confidence: 0.85,
           recommended_action: "Confirm you still use this subscription.",

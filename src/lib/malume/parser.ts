@@ -14,13 +14,13 @@ function parseAmount(raw: string): number | null {
 
 function findDate(text: string): string | null {
   const iso = text.match(/(20\d{2})[-/](\d{1,2})[-/](\d{1,2})/);
-  if (iso) return `${iso[1]}-${iso[2].padStart(2, "0")}-${iso[3].padStart(2, "0")}`;
+  if (iso) return `${iso[1]}-${iso[2]!.padStart(2, "0")}-${iso[3]!.padStart(2, "0")}`;
   const dmy = text.match(/\b(\d{1,2})[-/](\d{1,2})[-/](20\d{2})\b/);
-  if (dmy) return `${dmy[3]}-${dmy[2].padStart(2, "0")}-${dmy[1].padStart(2, "0")}`;
+  if (dmy) return `${dmy[3]}-${dmy[2]!.padStart(2, "0")}-${dmy[1]!.padStart(2, "0")}`;
   const named = text.match(/\b(\d{1,2})\s+([A-Za-z]{3,9})\s+(20\d{2})\b/);
   if (named) {
-    const m = MONTHS[named[2].slice(0, 3).toLowerCase()];
-    if (m) return `${named[3]}-${m}-${named[1].padStart(2, "0")}`;
+    const m = MONTHS[named[2]!.slice(0, 3).toLowerCase()];
+    if (m) return `${named[3]}-${m}-${named[1]!.padStart(2, "0")}`;
   }
   return null;
 }
@@ -34,7 +34,7 @@ function findTotal(text: string): number | null {
   for (const p of patterns) {
     const m = text.match(p);
     if (m) {
-      const v = parseAmount(m[1]);
+      const v = parseAmount(m[1]!);
       if (v !== null && v > 0) return v;
     }
   }
@@ -52,14 +52,14 @@ function findVatStatus(text: string): VatStatus {
 function findStatedVat(text: string): number | null {
   const m = text.match(/(?:stated\s+vat|vat\s+amount|vat)\s*[:\-]?\s*R?\s*([\d\s.,]+)/i);
   if (!m) return null;
-  const v = parseAmount(m[1]);
+  const v = parseAmount(m[1]!);
   return v && v > 0 ? v : null;
 }
 
 function findPaymentMethod(text: string): string | null {
   const m = text.match(/(?:paid(?:\s+by)?|payment(?:\s+method)?)\s*[:\-]?\s*([A-Za-z ]{2,30})/i);
   if (m) {
-    const v = m[1].trim().replace(/\s+/g, " ");
+    const v = m[1]!.trim().replace(/\s+/g, " ");
     if (v) return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
   }
   if (/\bcash\b/i.test(text)) return "Cash";
@@ -68,7 +68,7 @@ function findPaymentMethod(text: string): string | null {
 
 function findMerchant(text: string, lines: string[]): string | null {
   const labelled = text.match(/(?:merchant|supplier|vendor|from)\s*[:\-]\s*(.+)/i);
-  if (labelled) return labelled[1].trim();
+  if (labelled) return labelled[1]!.trim();
   for (const line of lines) {
     const l = line.trim();
     if (!l) continue;
@@ -85,9 +85,9 @@ function findLineItems(lines: string[]): LineItem[] {
   for (const line of lines) {
     const m = line.match(/^\s*(\d+)\s*[xX*]\s*(.+?)\s*@\s*R?\s*([\d\s.,]+)\s*$/);
     if (m) {
-      const price = parseAmount(m[3]);
+      const price = parseAmount(m[3]!);
       if (price !== null)
-        items.push({ description: m[2].trim(), quantity: Number(m[1]), unit_price: price });
+        items.push({ description: m[2]!.trim(), quantity: Number(m[1]), unit_price: price });
     }
   }
   return items;
