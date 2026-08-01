@@ -6,6 +6,7 @@ from decimal import Decimal
 from ledger.models import Transaction
 from vat.services import q
 
+from .malume import say
 from .models import Insight
 
 
@@ -85,6 +86,18 @@ def generate(user, period) -> list[Insight]:
                 financial_effect="",
                 recommended_action="Work through the review queue.",
             )
+        )
+
+    for item in found:
+        item.malume_take = say(
+            "Business: "
+            f"{getattr(user, 'business_name', '') or 'this business'}. "
+            f"Period: {period.month}. "
+            f"Finding: {item.insight} "
+            f"Financial effect: {item.financial_effect or 'not quantified'}. "
+            f"Recommended action: {item.recommended_action}. "
+            "Write your take on this for the owner.",
+            fallback=item.malume_take,
         )
 
     return Insight.objects.bulk_create(found)
