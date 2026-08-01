@@ -35,8 +35,12 @@ export function LedgerView({ highlight = [] }: { highlight?: string[] }) {
                 key={t.transaction_id}
                 id={`ledger-${t.transaction_id}`}
                 className={`scroll-mt-28 border-t border-border ${
-                  isHighlighted ? "bg-accent/20" : flags.length ? "bg-warning/10" : ""
-                }`}
+                  flags.length
+                    ? "bg-destructive/10 text-destructive"
+                    : isHighlighted
+                      ? "bg-accent/20"
+                      : ""
+                }${flags.length && isHighlighted ? " ring-1 ring-inset ring-destructive/40" : ""}`}
               >
                 <td className="num p-3">{t.date ?? "no date"}</td>
                 <td className="num p-3">{t.transaction_id}</td>
@@ -44,7 +48,7 @@ export function LedgerView({ highlight = [] }: { highlight?: string[] }) {
                   <span className="flex items-center gap-2">
                     {flags.length ? (
                       <AlertTriangle
-                        className="h-3.5 w-3.5 text-warning-foreground"
+                        className="h-3.5 w-3.5 text-destructive"
                         aria-label={flags.map((f) => f.label).join(", ")}
                       />
                     ) : null}

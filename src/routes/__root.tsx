@@ -148,7 +148,7 @@ function SiteHeader() {
           <img
             src={logoAsset.url}
             alt="Money Malume — AI financial assistant"
-            className="h-10 w-auto"
+            className="h-16 w-auto sm:h-20"
           />
           <span className="sr-only">Malume Money</span>
         </Link>
