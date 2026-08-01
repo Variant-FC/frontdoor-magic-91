@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
+import malumeAvatar from "@/assets/malume-avatar.png.asset.json";
+
 
 export function MalumeSays({
   children,
@@ -18,12 +20,13 @@ export function MalumeSays({
         className,
       )}
     >
-      <span
+      <img
+        src={malumeAvatar.url}
+        alt=""
         aria-hidden
-        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-lg font-semibold text-accent-foreground"
-      >
-        M
-      </span>
+        className="h-9 w-9 shrink-0 rounded-full bg-accent/20 object-cover object-center"
+      />
+
       <div className="space-y-1">
         <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] opacity-70">
           Malume says
