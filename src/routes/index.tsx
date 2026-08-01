@@ -34,6 +34,10 @@ function Dashboard() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-10 md:py-14">
+      <div className="mb-8">
+        <ProfileCard />
+      </div>
+
       <header className="max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Dashboard
@@ -69,7 +73,7 @@ function Dashboard() {
         </div>
 
         <div className="space-y-4">
-          <ProfileCard />
+
           <div className="card-paper rounded-xl p-4">
             <PrototypeNote />
           </div>
