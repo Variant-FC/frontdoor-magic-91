@@ -58,10 +58,7 @@ function Dashboard() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <Stat label="Insights ready" value={String(insights.length)} />
-            <Stat
-              label="Invoices outstanding"
-              value={`${outstanding.length} · ${formatZAR(0)}`.replace(` · ${formatZAR(0)}`, "")}
-            />
+            <Stat label="Invoices marked sent" value={String(outstanding.length)} />
           </div>
           {review ? (
             <p className="num text-xs text-muted-foreground">
@@ -126,7 +123,7 @@ function Shortcut({
   title,
   body,
 }: {
-  to: string;
+  to: "/expenses" | "/ledger" | "/insights" | "/invoices";
   icon: React.ReactNode;
   title: string;
   body: string;
