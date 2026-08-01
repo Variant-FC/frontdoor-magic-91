@@ -30,7 +30,7 @@ function Dashboard() {
   const totals = batchVatTotals(transactions);
   const outstanding = invoices.filter((i) => i.status === "sent");
 
-  const greeting = profile.owner ? `Sawubona, ${profile.owner}` : "Sawubona";
+  const greeting = profile.owner ? `Howzit, ${profile.owner}` : "Howzit";
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-10 md:py-14">
