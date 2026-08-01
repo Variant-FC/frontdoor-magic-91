@@ -49,8 +49,8 @@ function Dashboard() {
         </p>
         <h1 className="mt-3 text-4xl leading-tight font-semibold md:text-5xl">{greeting}</h1>
         <p className="mt-4 text-base text-muted-foreground">
-          {profile.business
-            ? `Here's where ${profile.business}'s money is sitting right now.`
+          {business
+            ? `Here's where ${business}'s money is sitting right now.`
             : "Here's where your money is sitting right now."}{" "}
           Every number below is worked out in code — the talking is Malume's, the maths isn't.
         </p>
