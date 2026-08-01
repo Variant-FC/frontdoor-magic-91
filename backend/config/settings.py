@@ -108,3 +108,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 VAT_RATE = "0.15"
 LOVABLE_AI_API_KEY = os.environ.get("LOVABLE_AI_API_KEY", "")
 AI_EXTRACTION_MODEL = os.environ.get("AI_EXTRACTION_MODEL", "google/gemini-3-flash")
+HUGGINGFACE_API_KEY = os.environ.get("HUGGINGFACE_API_KEY", "")
+HUGGINGFACE_MODEL = os.environ.get("HUGGINGFACE_MODEL", "meta-llama/Llama-3.1-8B-Instruct")
