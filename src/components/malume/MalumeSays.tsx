@@ -20,7 +20,7 @@ export function MalumeSays({
     >
       <span
         aria-hidden
-        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent font-display text-lg font-semibold text-accent-foreground"
+        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-lg font-semibold text-accent-foreground"
       >
         M
       </span>

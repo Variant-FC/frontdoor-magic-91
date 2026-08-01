@@ -16,7 +16,7 @@ export function InsightsView({ onJump }: { onJump: (ids: string[]) => void }) {
         {insights.length ? (
           insights.map((ins, i) => (
             <article key={i} className="card-paper space-y-3 rounded-lg p-5">
-              <h3 className="font-display text-lg">{ins.insight}</h3>
+              <h3 className="text-lg font-semibold">{ins.insight}</h3>
               <MalumeSays>{ins.malume_take}</MalumeSays>
               <dl className="grid gap-2 text-sm sm:grid-cols-2">
                 <div>
