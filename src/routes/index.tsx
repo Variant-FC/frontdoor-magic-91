@@ -73,7 +73,7 @@ function Dashboard() {
         </div>
 
         <div className="space-y-4">
-          <ProfileCard />
+
           <div className="card-paper rounded-xl p-4">
             <PrototypeNote />
           </div>
