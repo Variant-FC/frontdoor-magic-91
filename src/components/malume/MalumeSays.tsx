@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
+import malumeAvatar from "@/assets/malume-avatar.png.asset.json";
+
 
 export function MalumeSays({
   children,
