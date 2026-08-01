@@ -24,7 +24,7 @@ function ReviewPage() {
   const { transactions } = useMalume();
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-5 py-10 md:py-14">
+    <div className="w-full max-w-4xl py-6 md:py-8">
       <header className="max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Review Queue

@@ -43,7 +43,7 @@ function Expenses() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-5 py-10 md:py-14">
+    <div className="w-full py-6 md:py-8">
       <header className="max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Recorded Expenses
