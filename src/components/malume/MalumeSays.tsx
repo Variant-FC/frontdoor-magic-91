@@ -15,7 +15,7 @@ export function MalumeSays({
   return (
     <div
       className={cn(
-        "flex gap-3 rounded-lg p-4",
+        "flex gap-4 rounded-lg p-5",
         tone === "ink" ? "ink-panel" : "card-paper",
         className,
       )}
@@ -24,15 +24,16 @@ export function MalumeSays({
         src={malumeAvatar.url}
         alt=""
         aria-hidden
-        className="h-9 w-9 shrink-0 rounded-full bg-accent/20 object-cover object-center"
+        className="h-12 w-12 shrink-0 rounded-full bg-accent/20 object-cover object-center"
       />
 
-      <div className="space-y-1">
-        <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] opacity-70">
+      <div className="space-y-1.5">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] opacity-70">
           Malume says
         </p>
-        <div className="text-sm leading-relaxed">{children}</div>
+        <div className="text-base leading-relaxed">{children}</div>
       </div>
     </div>
+
   );
 }
