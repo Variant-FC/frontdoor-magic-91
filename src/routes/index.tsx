@@ -120,7 +120,7 @@ function Workspace() {
             <div className="grid grid-cols-2 gap-3">
               <MiniStat label="Records" value={String(transactions.length)} />
               <MiniStat label="Flags" value={String(anomalyCount)} />
-              <MiniStat label="Spend" value={formatZAR(totals.gross)} />
+              <MiniStat label="Gross (incl. VAT)" value={formatZAR(totals.gross)} />
               <MiniStat label="VAT" value={formatZAR(totals.confirmed)} />
             </div>
           ) : null}
