@@ -106,6 +106,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Malume Money" },
+      { name: "twitter:description", content: "Turn messy South African receipts and invoices into a clean ledger, with VAT calculated in code and explained in plain language." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b2ce50f0-0def-47d9-973b-af13f07f6f7c/id-preview-8ad73400--37d12a89-c77c-45de-8387-448425d3d14c.lovable.app-1785587492332.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b2ce50f0-0def-47d9-973b-af13f07f6f7c/id-preview-8ad73400--37d12a89-c77c-45de-8387-448425d3d14c.lovable.app-1785587492332.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
