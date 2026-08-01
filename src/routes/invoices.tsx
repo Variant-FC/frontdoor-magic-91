@@ -82,7 +82,7 @@ function InvoicesPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           The other side of the money
         </p>
-        <h1 className="mt-3 font-display text-4xl leading-tight">Bill your clients properly.</h1>
+        <h1 className="mt-3 text-4xl font-semibold leading-tight">Bill your clients properly.</h1>
         <p className="mt-4 text-muted-foreground">
           Same VAT rules as your expenses, calculated in code. Check the numbers, then finalise —
           nothing gets emailed, this is a prototype.
@@ -225,7 +225,7 @@ function InvoicesPage() {
 
       {invoices.length ? (
         <section className="mt-12 space-y-4">
-          <h2 className="font-display text-2xl">Your invoices</h2>
+          <h2 className="text-2xl font-semibold">Your invoices</h2>
           {invoices.map((inv) => (
             <InvoiceRow key={inv.invoice_id} invoice={inv} />
           ))}
