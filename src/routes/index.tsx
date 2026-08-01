@@ -26,11 +26,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { transactions, anomalyCount, insights, invoices, profile, review } = useMalume();
+  const { transactions, anomalyCount, insights, invoices, profile, profileReady, review } =
+    useMalume();
   const totals = batchVatTotals(transactions);
   const outstanding = invoices.filter((i) => i.status === "sent");
 
-  const greeting = profile.owner ? `Howzit, ${profile.owner}` : "Howzit";
+  // profile only exists after localStorage is read on the client
+  const owner = profileReady ? profile.owner : "";
+  const business = profileReady ? profile.business : "";
+  const greeting = owner ? `Howzit, ${owner}` : "Howzit";
+
 
   return (
     <div className="w-full py-6 md:py-8">
