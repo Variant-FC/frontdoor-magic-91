@@ -1,23 +1,15 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMalume } from "@/lib/malume/store";
-import { SAMPLE_BATCH } from "@/lib/malume/samples";
 import { malumeBatchTake } from "@/lib/malume/analysis";
 import { MalumeSays } from "@/components/malume/MalumeSays";
-import { TransactionCard } from "@/components/malume/TransactionCard";
-import { VatView } from "@/components/malume/VatView";
-import { LedgerView } from "@/components/malume/LedgerView";
-import { InsightsView } from "@/components/malume/InsightsView";
-import { ReviewView } from "@/components/malume/ReviewView";
 import { PrototypeNote } from "@/components/malume/PrototypeNote";
+import { ProfileCard } from "@/components/malume/ProfileCard";
 import { batchVatTotals, formatZAR } from "@/lib/malume/vat";
+import { ArrowRight, FileText, Receipt, ScrollText, Sparkles } from "lucide-react";
 
-const TITLE = "Malume Money — receipts into a ledger you actually understand";
+const TITLE = "Malume Money — your business money, explained like a person would";
 const DESCRIPTION =
-  "Paste South African receipts and invoices, get a clean ledger with VAT worked out in code, duplicate flags, plain-language insights and a human review step.";
+  "A personalised home for South African micro-business money: recorded expenses, a running ledger, plain-language insights and invoices you can send.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,160 +22,131 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Workspace,
+  component: Dashboard,
 });
 
-function Workspace() {
-  const { transactions, anomalies, anomalyCount, processBatch, clearBatch } = useMalume();
-  const [input, setInput] = useState("");
-  const [tab, setTab] = useState("extracted");
-  const [highlight, setHighlight] = useState<string[]>([]);
+function Dashboard() {
+  const { transactions, anomalyCount, insights, invoices, profile, review } = useMalume();
   const totals = batchVatTotals(transactions);
+  const outstanding = invoices.filter((i) => i.status === "sent");
 
-  const run = (text: string) => {
-    if (!text.trim()) return;
-    processBatch(text);
-    setTab("extracted");
-    setHighlight([]);
-  };
-
-  const jump = (ids: string[]) => {
-    setHighlight(ids);
-    setTab("ledger");
-    requestAnimationFrame(() => {
-      document.getElementById(`ledger-${ids[0]}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
-  };
+  const greeting = profile.owner ? `Sawubona, ${profile.owner} 👋` : "Sawubona 👋";
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-10 md:py-14">
       <header className="max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Micro-business financial workflow assistant
+          Dashboard
         </p>
-        <h1 className="mt-3 font-display text-4xl leading-tight md:text-5xl">
-          Your receipts, sorted — and explained like a person would.
-        </h1>
+        <h1 className="mt-3 text-4xl leading-tight font-semibold md:text-5xl">{greeting}</h1>
         <p className="mt-4 text-base text-muted-foreground">
-          Paste your receipts and invoices below. Malume Money pulls out the merchant, date, totals
-          and VAT, flags anything that looks off, and lets you fix everything before you sign it off.
+          {profile.business
+            ? `Here's where ${profile.business}'s money is sitting right now.`
+            : "Here's where your money is sitting right now."}{" "}
+          Every number below is worked out in code — the talking is Malume's, the maths isn't.
         </p>
       </header>
 
-      <section className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-        <div className="card-paper space-y-3 rounded-lg p-5">
-          <label htmlFor="batch" className="text-sm font-semibold">
-            Paste a batch of receipts or invoices
-          </label>
-          <Textarea
-            id="batch"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            rows={10}
-            placeholder={"MZANSI OFFICE MART\nDate: 2026-07-14\nTOTAL (incl VAT): R805.00\nPaid by: Card\n\n---\n\nNext receipt..."}
-            className="num text-xs"
-          />
-          <p className="text-xs text-muted-foreground">
-            Separate each record with a line of three dashes (---) or a blank gap.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={() => run(input)} disabled={!input.trim()}>
-              Process batch
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setInput(SAMPLE_BATCH);
-                run(SAMPLE_BATCH);
-              }}
-            >
-              Load sample batch
-            </Button>
-            {transactions.length ? (
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  clearBatch();
-                  setInput("");
-                }}
-              >
-                Clear
-              </Button>
-            ) : null}
+      <section className="mt-8 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+        <div className="space-y-4">
+          <MalumeSays tone="ink">{malumeBatchTake(transactions, anomalyCount)}</MalumeSays>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Stat label="Records" value={String(transactions.length)} />
+            <Stat label="Flags" value={String(anomalyCount)} />
+            <Stat label="Gross (incl. VAT)" value={formatZAR(totals.gross)} />
+            <Stat label="VAT confirmed" value={formatZAR(totals.confirmed)} />
           </div>
-          <PrototypeNote />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Stat label="Insights ready" value={String(insights.length)} />
+            <Stat
+              label="Invoices outstanding"
+              value={`${outstanding.length} · ${formatZAR(0)}`.replace(` · ${formatZAR(0)}`, "")}
+            />
+          </div>
+          {review ? (
+            <p className="num text-xs text-muted-foreground">
+              Ledger {review.review_status} · reviewed_by: {review.reviewed_by} · changes_made:{" "}
+              {String(review.changes_made)}
+            </p>
+          ) : null}
         </div>
 
         <div className="space-y-4">
-          <MalumeSays tone="ink">{malumeBatchTake(transactions, anomalyCount)}</MalumeSays>
-          {transactions.length ? (
-            <div className="grid grid-cols-2 gap-3">
-              <MiniStat label="Records" value={String(transactions.length)} />
-              <MiniStat label="Flags" value={String(anomalyCount)} />
-              <MiniStat label="Gross (incl. VAT)" value={formatZAR(totals.gross)} />
-              <MiniStat label="VAT" value={formatZAR(totals.confirmed)} />
-            </div>
-          ) : null}
+          <ProfileCard />
+          <div className="card-paper rounded-xl p-4">
+            <PrototypeNote />
+          </div>
         </div>
       </section>
 
-      {transactions.length ? (
-        <section className="mt-12">
-          <Tabs value={tab} onValueChange={setTab}>
-            <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 bg-secondary p-1">
-              <TabsTrigger value="extracted">Extracted data</TabsTrigger>
-              <TabsTrigger value="vat">VAT</TabsTrigger>
-              <TabsTrigger value="ledger">Ledger</TabsTrigger>
-              <TabsTrigger value="insights">
-                Insights {anomalyCount ? `(${anomalyCount})` : ""}
-              </TabsTrigger>
-              <TabsTrigger value="review">Review & approve</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="extracted" className="mt-6 space-y-4">
-              {transactions.map((t) => (
-                <TransactionCard
-                  key={t.transaction_id}
-                  tx={t}
-                  anomalies={anomalies[t.transaction_id] ?? []}
-                />
-              ))}
-            </TabsContent>
-            <TabsContent value="vat" className="mt-6">
-              <VatView />
-            </TabsContent>
-            <TabsContent value="ledger" className="mt-6 space-y-3">
-              {highlight.length ? (
-                <p className="text-sm text-muted-foreground">
-                  Highlighting evidence:{" "}
-                  <span className="num">{highlight.join(", ")}</span>{" "}
-                  <button className="underline" onClick={() => setHighlight([])}>
-                    clear
-                  </button>
-                </p>
-              ) : null}
-              <LedgerView highlight={highlight} />
-            </TabsContent>
-            <TabsContent value="insights" className="mt-6">
-              <InsightsView onJump={jump} />
-            </TabsContent>
-            <TabsContent value="review" className="mt-6">
-              <ReviewView />
-            </TabsContent>
-          </Tabs>
-        </section>
-      ) : null}
+      <section className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Shortcut
+          to="/expenses"
+          icon={<Receipt className="h-4 w-4" aria-hidden />}
+          title="Recorded Expenses"
+          body="Paste or load receipts, fix anything wrong, see the VAT working."
+        />
+        <Shortcut
+          to="/ledger"
+          icon={<ScrollText className="h-4 w-4" aria-hidden />}
+          title="Ledger"
+          body="A running ledger by date, with flagged rows called out inline."
+        />
+        <Shortcut
+          to="/insights"
+          icon={<Sparkles className="h-4 w-4" aria-hidden />}
+          title="Insights"
+          body="Anomalies and cross-transaction patterns, each with its evidence."
+        />
+        <Shortcut
+          to="/invoices"
+          icon={<FileText className="h-4 w-4" aria-hidden />}
+          title="Invoices"
+          body="Bill your own clients with VAT handled the same way."
+        />
+      </section>
     </div>
   );
 }
 
-function MiniStat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="card-paper rounded-lg p-4">
+    <div className="card-paper rounded-xl p-4">
       <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
         {label}
       </p>
       <p className="num mt-1 text-lg font-semibold">{value}</p>
     </div>
+  );
+}
+
+function Shortcut({
+  to,
+  icon,
+  title,
+  body,
+}: {
+  to: string;
+  icon: React.ReactNode;
+  title: string;
+  body: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="card-paper group rounded-xl p-5 transition-colors hover:border-primary"
+    >
+      <span className="grid h-8 w-8 place-items-center rounded-lg bg-secondary text-secondary-foreground">
+        {icon}
+      </span>
+      <p className="mt-3 flex items-center gap-1 font-semibold">
+        {title}
+        <ArrowRight
+          className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100"
+          aria-hidden
+        />
+      </p>
+      <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+    </Link>
   );
 }
