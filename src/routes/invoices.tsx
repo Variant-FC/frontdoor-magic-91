@@ -271,15 +271,23 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
         <div className="mt-5 rounded-md border border-border bg-paper p-6">
           <div className="flex flex-wrap justify-between gap-4 border-b border-border pb-4">
             <div>
-              <h3 className="font-display text-2xl">Invoice {invoice.invoice_id}</h3>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                {profile.business || "Your business"}
+                {profile.owner ? ` · ${profile.owner}` : ""}
+              </p>
+              <h3 className="mt-1 text-2xl font-semibold">Invoice {invoice.invoice_id}</h3>
               <p className="text-sm text-muted-foreground">Issued {invoice.issue_date}</p>
             </div>
             <div className="text-sm">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Billed to
+              </p>
               <p className="font-semibold">{invoice.client_name}</p>
               <p className="text-muted-foreground">{invoice.client_details}</p>
               <p className="num text-muted-foreground">Due {invoice.due_date}</p>
             </div>
           </div>
+
           <table className="mt-4 w-full text-sm">
             <thead className="text-left text-xs uppercase tracking-[0.1em] text-muted-foreground">
               <tr>
