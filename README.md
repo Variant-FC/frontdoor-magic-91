@@ -11,9 +11,7 @@ A short project overview.
 - Insights
 - ...
 
-## Screenshots
 
-(Optional)
 
 ## Tech Stack
 
@@ -44,18 +42,3 @@ A short project overview.
 - Regex-based receipt extraction
 - Rule-based categorisation
 
-## Project Structure
-
-## Installation
-
-## Environment Variables
-
-## Running the Project
-
-## API Overview
-
-## Roadmap
-
-## Contributing
-
-## License
