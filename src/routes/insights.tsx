@@ -5,6 +5,8 @@ import { MalumeSays } from "@/components/malume/MalumeSays";
 import { Button } from "@/components/ui/button";
 import { malumeBatchTake } from "@/lib/malume/analysis";
 import { buildInsightsSummary, downloadText } from "@/lib/malume/export";
+import { buildBatchFacts } from "@/lib/malume/facts";
+import { useMalumeTake } from "@/lib/malume/useMalumeTake";
 import { Download } from "lucide-react";
 
 const TITLE = "Insights — Malume Money";
@@ -66,7 +68,7 @@ function InsightsPage() {
       {transactions.length ? (
         <>
           <div className="mt-8 space-y-4">
-            <MalumeSays tone="ink">{malumeBatchTake(transactions, anomalyCount)}</MalumeSays>
+            <MalumeSays tone="ink">{malumeText}</MalumeSays>
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="secondary" onClick={exportSummary}>
                 <Download className="h-4 w-4" aria-hidden /> Download monthly summary
