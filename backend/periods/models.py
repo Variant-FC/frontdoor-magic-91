@@ -2,6 +2,7 @@ import uuid
 from datetime import date
 from decimal import Decimal
 
+
 from django.conf import settings
 from django.db import models
 
@@ -45,10 +46,12 @@ class Period(models.Model):
             user=self.user, status="paid", issue_date__startswith=self.month
         ).aggregate(total=models.Sum("total"))["total"] or Decimal("0.00")
 
+        from vat.services import q
+
         return {
-            "total_expenses": expenses,
-            "total_income": income,
-            "profit": income - expenses,
-            "total_vat": agg["vat"] or Decimal("0.00"),
+            "total_expenses": q(expenses),
+            "total_income": q(income),
+            "profit": q(income - expenses),
+            "total_vat": q(agg["vat"] or Decimal("0.00")),
             "transaction_count": agg["count"] or 0,
         }

@@ -50,6 +50,7 @@ def process(upload) -> int:
             )
 
         for row in created:
+            row.refresh_from_db()  # normalise types (date strings -> date objects)
             detect_for(row)
 
         upload.status = "extracted"
