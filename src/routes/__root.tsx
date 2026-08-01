@@ -12,7 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { MalumeProvider } from "../lib/malume/store";
-import logoAsset from "../assets/malume-logo.jpg.asset.json";
+import logoAsset from "../assets/malume-logo.png.asset.json";
 
 function NotFoundComponent() {
   return (
