@@ -1,9 +1,23 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { parseBatch } from "./parser";
 import { buildInsights, detectAnomalies } from "./analysis";
 import type { Invoice, ReviewOutput, Transaction } from "./types";
 
+export type Profile = { owner: string; business: string };
+
+const PROFILE_KEY = "malume.profile";
+
 type Store = {
+  profile: Profile;
+  profileReady: boolean;
+  setProfile: (p: Profile) => void;
   transactions: Transaction[];
   anomalies: ReturnType<typeof detectAnomalies>;
   anomalyCount: number;
@@ -27,6 +41,19 @@ export function MalumeProvider({ children }: { children: ReactNode }) {
   const [review, setReviewState] = useState<ReviewOutput | null>(null);
   const [changesMade, setChangesMade] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [profile, setProfileState] = useState<Profile>({ owner: "", business: "" });
+  const [profileReady, setProfileReady] = useState(false);
+
+  // Lightweight local persistence only — no accounts, no real identity (PRD §5).
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(PROFILE_KEY);
+      if (raw) setProfileState(JSON.parse(raw) as Profile);
+    } catch {
+      /* ignore */
+    }
+    setProfileReady(true);
+  }, []);
 
   const anomalies = useMemo(() => detectAnomalies(transactions), [transactions]);
   const insights = useMemo(() => buildInsights(transactions, anomalies), [transactions, anomalies]);
@@ -36,6 +63,16 @@ export function MalumeProvider({ children }: { children: ReactNode }) {
   );
 
   const value: Store = {
+    profile,
+    profileReady,
+    setProfile: (p) => {
+      setProfileState(p);
+      try {
+        window.localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+      } catch {
+        /* ignore */
+      }
+    },
     transactions,
     anomalies,
     anomalyCount,
