@@ -4,14 +4,16 @@ export const VAT_RATE = 0.15;
 
 export const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
 
-export const formatZAR = (n: number | null | undefined) =>
-  n === null || n === undefined
-    ? "—"
-    : new Intl.NumberFormat("en-ZA", {
-        style: "currency",
-        currency: "ZAR",
-        minimumFractionDigits: 2,
-      }).format(n);
+/** Deterministic ZAR formatting — Intl's en-ZA output differs between the
+ *  server and the browser, which broke hydration. */
+export const formatZAR = (n: number | null | undefined) => {
+  if (n === null || n === undefined || Number.isNaN(n)) return "—";
+  const neg = n < 0;
+  const [whole, cents] = Math.abs(round2(n)).toFixed(2).split(".");
+  const grouped = whole!.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return `${neg ? "-" : ""}R ${grouped}.${cents}`;
+};
+
 
 export type VatBreakdown = {
   /** null when it must not be calculated */
