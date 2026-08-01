@@ -126,7 +126,7 @@ def _call_huggingface(prompt: str) -> str:
     import requests
 
     response = requests.post(
-        f"https://router.huggingface.co/v1/chat/completions",
+        "https://router.huggingface.co/v1/chat/completions",
         headers={"Authorization": f"Bearer {settings.HUGGINGFACE_API_KEY}"},
         json={
             "model": settings.HUGGINGFACE_MODEL,
