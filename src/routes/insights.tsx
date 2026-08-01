@@ -48,7 +48,7 @@ function InsightsPage() {
       transactions,
       anomalies,
       insights,
-      malumeTake: malumeBatchTake(transactions, anomalyCount),
+      malumeTake: malumeText,
     });
     downloadText(
       `malume-insights-${new Date().toISOString().slice(0, 10)}.txt`,
