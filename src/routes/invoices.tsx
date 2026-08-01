@@ -236,7 +236,7 @@ function InvoicesPage() {
 }
 
 function InvoiceRow({ invoice }: { invoice: Invoice }) {
-  const { saveInvoice } = useMalume();
+  const { saveInvoice, profile } = useMalume();
   const [open, setOpen] = useState(false);
   const totals = invoiceTotals(invoice.line_items, invoice.vat_status);
 
