@@ -33,7 +33,7 @@ function Dashboard() {
   const greeting = profile.owner ? `Howzit, ${profile.owner}` : "Howzit";
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-5 py-10 md:py-14">
+    <div className="w-full py-6 md:py-8">
       <div className="mb-8">
         <ProfileCard />
       </div>

@@ -77,7 +77,7 @@ function InvoicesPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-5 py-10 md:py-14">
+    <div className="w-full py-6 md:py-8">
       <header className="max-w-2xl">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           The other side of the money
