@@ -129,14 +129,15 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-const NAV = [
+const NAV: { to: "/" | "/expenses" | "/ledger" | "/insights" | "/invoices" | "/review"; label: string; exact?: boolean }[] = [
   { to: "/", label: "Dashboard", exact: true },
   { to: "/expenses", label: "Expenses" },
   { to: "/ledger", label: "Ledger" },
   { to: "/insights", label: "Insights" },
   { to: "/invoices", label: "Invoices" },
   { to: "/review", label: "Review" },
-] as const;
+];
+
 
 function SiteHeader() {
   return (
