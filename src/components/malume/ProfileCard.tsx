@@ -20,6 +20,13 @@ export function ProfileCard() {
   const unset = profileReady && !profile.owner && !profile.business;
   const open = editing || unset;
 
+  // Nothing is known until localStorage has been read on the client; rendering
+  // early makes the server and client markup disagree and React throws away
+  // the tree (which looked like the card "not working").
+  if (!profileReady) {
+    return <div className="card-paper h-[68px] rounded-xl p-4" aria-hidden />;
+  }
+
   if (!open) {
     return (
       <div className="card-paper flex items-center gap-3 rounded-xl p-4">
