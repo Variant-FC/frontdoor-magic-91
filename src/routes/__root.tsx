@@ -77,16 +77,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Malume Money" },
+      {
+        name: "description",
+        content:
+          "Turn messy South African receipts and invoices into a clean ledger, with VAT calculated in code and explained in plain language.",
+      },
+      { name: "author", content: "Malume Money" },
+      { property: "og:title", content: "Malume Money" },
+      {
+        property: "og:description",
+        content:
+          "Turn messy South African receipts and invoices into a clean ledger, with VAT calculated in code and explained in plain language.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
@@ -114,13 +127,62 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function SiteHeader() {
+  return (
+    <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
+      <div className="mx-auto flex w-full max-w-6xl items-center gap-6 px-5 py-3">
+        <Link to="/" className="flex items-center gap-2">
+          <span
+            aria-hidden
+            className="grid h-8 w-8 place-items-center rounded-full bg-accent font-display text-base font-semibold text-accent-foreground"
+          >
+            M
+          </span>
+          <span className="font-display text-lg font-semibold">Malume Money</span>
+        </Link>
+        <nav className="ml-auto flex items-center gap-1 text-sm">
+          <Link
+            to="/"
+            activeOptions={{ exact: true }}
+            className="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:text-foreground"
+            activeProps={{ className: "bg-secondary text-secondary-foreground font-medium" }}
+          >
+            Expenses
+          </Link>
+          <Link
+            to="/invoices"
+            className="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:text-foreground"
+            activeProps={{ className: "bg-secondary text-secondary-foreground font-medium" }}
+          >
+            Invoices
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <MalumeProvider>
+        <div className="flex min-h-screen flex-col">
+          <SiteHeader />
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <main className="flex-1">
+            <Outlet />
+          </main>
+          <footer className="border-t border-border py-6">
+            <p className="mx-auto max-w-6xl px-5 text-xs text-muted-foreground">
+              Malume Money is an educational prototype built on synthetic data. It does not connect
+              to a bank, does not file with SARS, and does not provide tax or accounting advice.
+            </p>
+          </footer>
+        </div>
+      </MalumeProvider>
     </QueryClientProvider>
   );
 }
+
