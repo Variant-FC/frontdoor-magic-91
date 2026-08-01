@@ -99,8 +99,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap",
       },
+
       {
         rel: "stylesheet",
         href: appCss,
@@ -128,40 +129,47 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+const NAV: { to: "/" | "/expenses" | "/ledger" | "/insights" | "/invoices" | "/review"; label: string; exact?: boolean }[] = [
+  { to: "/", label: "Dashboard", exact: true },
+  { to: "/expenses", label: "Expenses" },
+  { to: "/ledger", label: "Ledger" },
+  { to: "/insights", label: "Insights" },
+  { to: "/invoices", label: "Invoices" },
+  { to: "/review", label: "Review" },
+];
+
+
 function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-6xl items-center gap-6 px-5 py-3">
+      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-5 py-3">
         <Link to="/" className="flex items-center gap-2">
           <span
             aria-hidden
-            className="grid h-8 w-8 place-items-center rounded-full bg-accent font-display text-base font-semibold text-accent-foreground"
+            className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-base font-bold text-primary-foreground"
           >
             M
           </span>
-          <span className="font-display text-lg font-semibold">Malume Money</span>
+          <span className="text-lg font-semibold tracking-tight">Malume Money</span>
         </Link>
-        <nav className="ml-auto flex items-center gap-1 text-sm">
-          <Link
-            to="/"
-            activeOptions={{ exact: true }}
-            className="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:text-foreground"
-            activeProps={{ className: "bg-secondary text-secondary-foreground font-medium" }}
-          >
-            Expenses
-          </Link>
-          <Link
-            to="/invoices"
-            className="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:text-foreground"
-            activeProps={{ className: "bg-secondary text-secondary-foreground font-medium" }}
-          >
-            Invoices
-          </Link>
+        <nav className="ml-auto flex flex-wrap items-center gap-1 text-sm">
+          {NAV.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              {...(item.exact ? { activeOptions: { exact: true } } : {})}
+              className="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "bg-secondary text-secondary-foreground font-medium" }}
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
       </div>
     </header>
   );
 }
+
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();

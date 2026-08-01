@@ -82,7 +82,7 @@ function InvoicesPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           The other side of the money
         </p>
-        <h1 className="mt-3 font-display text-4xl leading-tight">Bill your clients properly.</h1>
+        <h1 className="mt-3 text-4xl font-semibold leading-tight">Bill your clients properly.</h1>
         <p className="mt-4 text-muted-foreground">
           Same VAT rules as your expenses, calculated in code. Check the numbers, then finalise —
           nothing gets emailed, this is a prototype.
@@ -225,7 +225,7 @@ function InvoicesPage() {
 
       {invoices.length ? (
         <section className="mt-12 space-y-4">
-          <h2 className="font-display text-2xl">Your invoices</h2>
+          <h2 className="text-2xl font-semibold">Your invoices</h2>
           {invoices.map((inv) => (
             <InvoiceRow key={inv.invoice_id} invoice={inv} />
           ))}
@@ -236,7 +236,7 @@ function InvoicesPage() {
 }
 
 function InvoiceRow({ invoice }: { invoice: Invoice }) {
-  const { saveInvoice } = useMalume();
+  const { saveInvoice, profile } = useMalume();
   const [open, setOpen] = useState(false);
   const totals = invoiceTotals(invoice.line_items, invoice.vat_status);
 
@@ -271,15 +271,23 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
         <div className="mt-5 rounded-md border border-border bg-paper p-6">
           <div className="flex flex-wrap justify-between gap-4 border-b border-border pb-4">
             <div>
-              <h3 className="font-display text-2xl">Invoice {invoice.invoice_id}</h3>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                {profile.business || "Your business"}
+                {profile.owner ? ` · ${profile.owner}` : ""}
+              </p>
+              <h3 className="mt-1 text-2xl font-semibold">Invoice {invoice.invoice_id}</h3>
               <p className="text-sm text-muted-foreground">Issued {invoice.issue_date}</p>
             </div>
             <div className="text-sm">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Billed to
+              </p>
               <p className="font-semibold">{invoice.client_name}</p>
               <p className="text-muted-foreground">{invoice.client_details}</p>
               <p className="num text-muted-foreground">Due {invoice.due_date}</p>
             </div>
           </div>
+
           <table className="mt-4 w-full text-sm">
             <thead className="text-left text-xs uppercase tracking-[0.1em] text-muted-foreground">
               <tr>
