@@ -308,6 +308,118 @@ export const FEATURE_DOMAINS: FeatureDomain[] = [
       },
     ],
   },
+  {
+    key: "persona",
+    name: "Malume persona",
+    purpose: "Make the numbers land in a voice people actually listen to.",
+    entities: ["MalumeTake"],
+    dependsOn: ["insights"],
+    capabilities: [
+      {
+        id: "persona.voice",
+        title: "Plain-spoken commentary on every view",
+        detail:
+          "Batch takes and per-insight commentary in Malume's voice, sitting next to the figure it refers to.",
+        status: "done",
+      },
+      {
+        id: "persona.boundary",
+        title: "Persona never does the maths",
+        detail:
+          "All arithmetic is computed in code; the persona only narrates the already-calculated result.",
+        status: "done",
+      },
+    ],
+  },
+  {
+    key: "reporting",
+    name: "Reporting & export",
+    purpose: "Get the month out of the tool and into an accountant's hands.",
+    entities: ["Summary", "Export"],
+    dependsOn: ["insights", "vat"],
+    capabilities: [
+      {
+        id: "reporting.summary",
+        title: "Monthly summary export",
+        detail:
+          "Downloadable summary with business details, VAT totals, insights and flagged anomalies.",
+        status: "done",
+      },
+      {
+        id: "reporting.formats",
+        title: "Accountant-ready formats",
+        detail: "CSV and PDF exports alongside the current text summary.",
+        status: "planned",
+      },
+    ],
+  },
+  {
+    key: "shell",
+    name: "App shell & navigation",
+    purpose: "Hold everything in one calm, consistent frame.",
+    entities: ["Route", "Nav"],
+    dependsOn: [],
+    capabilities: [
+      {
+        id: "shell.layout",
+        title: "Sidebar, top bar and page routes",
+        detail:
+          "Floating left sidebar, minimal top bar, and dedicated routes for dashboard, expenses, ledger, insights, invoices and review.",
+        status: "done",
+      },
+      {
+        id: "shell.dashboard",
+        title: "Personalised dashboard",
+        detail: "Greeting, business profile card and headline figures on the landing route.",
+        status: "done",
+      },
+      {
+        id: "shell.branding",
+        title: "Brand identity",
+        detail: "Money Malume logo in the header and as the favicon.",
+        status: "done",
+      },
+      {
+        id: "shell.evidence",
+        title: "Jump-to-evidence linking",
+        detail: "Insights link into the ledger and highlight the exact supporting rows.",
+        status: "done",
+      },
+      {
+        id: "shell.search",
+        title: "Global search",
+        detail: "Top-bar search across transactions, merchants and invoices.",
+        status: "planned",
+      },
+      {
+        id: "shell.notifications",
+        title: "Notifications",
+        detail: "Alerts for flagged records and invoices falling due.",
+        status: "planned",
+      },
+    ],
+  },
+  {
+    key: "prototype",
+    name: "Prototype scaffolding",
+    purpose: "Be honest that this is a demo, and make it easy to try.",
+    entities: ["SampleBatch"],
+    dependsOn: ["ingestion"],
+    capabilities: [
+      {
+        id: "prototype.samples",
+        title: "Sample South African batch",
+        detail: "One-click realistic receipt batch so the tool can be tried with no data.",
+        status: "done",
+      },
+      {
+        id: "prototype.disclosure",
+        title: "Prototype-mode disclosure",
+        detail: "Clear note that data is synthetic and nothing is filed with SARS.",
+        status: "done",
+      },
+    ],
+  },
 ];
 
 export const FEATURE_DOMAIN_BY_KEY: Record<string, FeatureDomain> = Object.fromEntries(
