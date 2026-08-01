@@ -108,37 +108,63 @@ def split_batch(text: str) -> list[str]:
 
 def extract(text: str) -> list[dict]:
     records = [parse_receipt(chunk) for chunk in split_batch(text)]
-    if settings.LOVABLE_AI_API_KEY:
+    if settings.HUGGINGFACE_API_KEY or settings.LOVABLE_AI_API_KEY:
         records = [_ai_enrich(record) for record in records]
     return records
 
 
 # --- optional AI pass -------------------------------------------------
+PROMPT = (
+    "Extract receipt fields as JSON with keys merchant, date (YYYY-MM-DD), "
+    "category (one of office_supplies, transport, food_and_entertainment, utilities, "
+    "software_and_subscriptions, stock_and_materials, professional_services, marketing, other). "
+    "Reply with JSON only. Do not compute VAT or any totals. Receipt:\n\n"
+)
+
+
+def _call_huggingface(prompt: str) -> str:
+    import requests
+
+    response = requests.post(
+        f"https://router.huggingface.co/v1/chat/completions",
+        headers={"Authorization": f"Bearer {settings.HUGGINGFACE_API_KEY}"},
+        json={
+            "model": settings.HUGGINGFACE_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+        },
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.json()["choices"][0]["message"]["content"]
+
+
+def _call_lovable(prompt: str) -> str:
+    import requests
+
+    response = requests.post(
+        "https://ai.gateway.lovable.dev/v1/chat/completions",
+        headers={"Authorization": f"Bearer {settings.LOVABLE_AI_API_KEY}"},
+        json={
+            "model": settings.AI_EXTRACTION_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+        },
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.json()["choices"][0]["message"]["content"]
+
+
 def _ai_enrich(record: dict) -> dict:
     """Ask the model to fill in only the fields the parser missed."""
     if not record["missing_information"] and record["category"] != "other":
         return record
 
-    import requests
-
-    prompt = (
-        "Extract receipt fields as JSON with keys merchant, date (YYYY-MM-DD), "
-        "category (one of office_supplies, transport, food_and_entertainment, utilities, "
-        "software_and_subscriptions, stock_and_materials, professional_services, marketing, other). "
-        "Do not compute VAT or any totals. Receipt:\n\n" + record["raw_text"]
-    )
+    prompt = PROMPT + record["raw_text"]
     try:
-        response = requests.post(
-            "https://ai.gateway.lovable.dev/v1/chat/completions",
-            headers={"Authorization": f"Bearer {settings.LOVABLE_AI_API_KEY}"},
-            json={
-                "model": settings.AI_EXTRACTION_MODEL,
-                "messages": [{"role": "user", "content": prompt}],
-            },
-            timeout=30,
-        )
-        response.raise_for_status()
-        content = response.json()["choices"][0]["message"]["content"]
+        if settings.HUGGINGFACE_API_KEY:
+            content = _call_huggingface(prompt)
+        else:
+            content = _call_lovable(prompt)
         data = json.loads(re.search(r"\{.*\}", content, re.S).group(0))
     except Exception:  # AI is best-effort; the rule parser already succeeded
         return record
