@@ -29,6 +29,12 @@ export const Route = createFileRoute("/insights")({
 
 function InsightsPage() {
   const { transactions, anomalies, anomalyCount, insights, profile } = useMalume();
+
+  const { text: malumeText } = useMalumeTake(
+    buildBatchFacts(transactions, anomalyCount, profile.business),
+    malumeBatchTake(transactions, anomalyCount),
+    transactions.length > 0,
+  );
   const navigate = useNavigate();
 
   const jump = (ids: string[]) => {
